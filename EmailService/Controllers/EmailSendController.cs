@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using EmailService.Configuration;
 using EmailService.Dtos.Requests;
 using EmailService.Models;
 using EmailService.Service;
-using EmailService.Tools;
+using EmailService.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmailService.Controllers
@@ -14,22 +16,22 @@ namespace EmailService.Controllers
     public class ValuesController : ControllerBase
     {
         private readonly EmailConfiguration _emailConfiguration;
-        private readonly ITemplatingService _templatingService;
         private readonly IEmailService _emailService;
         private readonly IEmailServiceConfiguration _emailServiceConfiguration;
+        private readonly IHtmlGeneratorService _htmlGeneratorService;
         
-        public ValuesController(EmailConfiguration emailConfiguration, ITemplatingService templatingService, IEmailService emailService, IEmailServiceConfiguration emailServiceConfiguration)
+        public ValuesController(EmailConfiguration emailConfiguration, IEmailService emailService, IEmailServiceConfiguration emailServiceConfiguration, IHtmlGeneratorService htmlGeneratorService)
         {
             _emailConfiguration = emailConfiguration;
-            _templatingService = templatingService;
             _emailService = emailService;
             _emailServiceConfiguration = emailServiceConfiguration;
+            _htmlGeneratorService = htmlGeneratorService;
         }
         
         // POST api/email/send
         [HttpPost]
         [Route("", Name = "SendEmail")]
-        public IActionResult Post([FromBody] EmailSendRequest request)
+        public async Task<IActionResult> Post([FromBody] EmailSendRequest request)
         {
             bool isValidEmailRequest = IsValidEmailRequest(request);
 
@@ -49,7 +51,7 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult($"Invalid format of recipient email {request.To}.");
             }
 
-            Template template = _templatingService.GetTemplate(_emailConfiguration, request.Template);
+            Template template = _emailConfiguration.Templates.FirstOrDefault(d => d.Name.Equals(request.Template));
 
             bool isInvalidTemplate = template == null;
 
@@ -58,7 +60,8 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult($"A template with the name {request.Template} does not exist.");
             }
 
-            string rawHtml = HtmlGenerator.GenerateRawHtml(template, request.Content);
+            EmailViewModel emailViewModel = new EmailViewModel() {TemplateName = template.Name, Content = request.Content};
+            string rawHtml = await _htmlGeneratorService.GetRawHtmlAsync("~/View/Email/Index.cshtml", emailViewModel);
             
             Email email = new Email(toAddress, template.Subject, ContentType.TEXT_HTML, rawHtml);
             _emailService.SendEmail(_emailConfiguration, _emailServiceConfiguration, email);

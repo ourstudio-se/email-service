@@ -1,0 +1,9 @@
+﻿@using EmailService.ViewModels
+
+@{
+Layout = "~/Views/_Layout.cshtml";
+
+var model = new EmailViewModel();
+}
+
+<div id="application-node" asp-prerender-module="wwwroot/build/server.bundle" asp-prerender-data="model"></div>

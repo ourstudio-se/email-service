@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using EmailService.Models;
 using EmailService.Utils;
 using Newtonsoft.Json.Linq;
 
@@ -8,8 +9,7 @@ namespace EmailService.Configuration
 	{
 		public string FromAddress { get; set; }
 		public string FromName { get; set; }
-		public string TemplatePath { get; set; }
-		public TemplateDefinition[] Templates { get; set; }
+		public Template[] Templates { get; set; }
 
 		private const string EMAIL_CONFIGURATION_PATH = "EmailConfiguration.json";
 
