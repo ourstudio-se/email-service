@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using EmailService.Service;
+using EmailService.Service.Implementations;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,11 @@ namespace EmailService
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<ITemplatingService>(new FilesystemTemplatingService());
+            
+            services.AddScoped<IEmailConfiguration, SendGridEmailConfiguration>();
+            services.AddScoped<IEmailService, SendGridEmailService>();
+                
             services.AddMvc();
         }
 
