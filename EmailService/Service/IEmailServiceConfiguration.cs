@@ -1,6 +1,6 @@
 ﻿namespace EmailService.Service
 {
-	public interface IEmailConfiguration
+	public interface IEmailServiceConfiguration
 	{
 		string GetUrl();
 	}

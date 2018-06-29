@@ -1,6 +1,6 @@
 ﻿namespace EmailService.Service.Implementations
 {
-	public class SendGridEmailConfiguration : IEmailConfiguration
+	public class SendGridEmailServiceConfiguration : IEmailServiceConfiguration
 	{
 		public string GetUrl()
 		{

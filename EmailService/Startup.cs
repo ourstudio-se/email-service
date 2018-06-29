@@ -20,8 +20,10 @@ namespace EmailService
         {
             services.AddSingleton<ITemplatingService>(new FilesystemTemplatingService());
             
-            services.AddScoped<IEmailConfiguration, SendGridEmailConfiguration>();
+            services.AddScoped<IEmailServiceConfiguration, SendGridEmailServiceConfiguration>();
             services.AddScoped<IEmailService, SendGridEmailService>();
+
+            services.AddSingleton(EmailConfiguration.CreateInstance());
                 
             services.AddMvc();
         }

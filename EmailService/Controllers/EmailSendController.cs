@@ -12,15 +12,17 @@ namespace EmailService.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly EmailConfiguration _emailConfiguration;
         private readonly ITemplatingService _templatingService;
         private readonly IEmailService _emailService;
-        private readonly IEmailConfiguration _emailConfiguration;
+        private readonly IEmailServiceConfiguration _emailServiceConfiguration;
         
-        public ValuesController(ITemplatingService templatingService, IEmailService emailService, IEmailConfiguration emailConfiguration)
+        public ValuesController(EmailConfiguration emailConfiguration, ITemplatingService templatingService, IEmailService emailService, IEmailServiceConfiguration emailServiceConfiguration)
         {
+            _emailConfiguration = emailConfiguration;
             _templatingService = templatingService;
             _emailService = emailService;
-            _emailConfiguration = emailConfiguration;
+            _emailServiceConfiguration = emailServiceConfiguration;
         }
         
         // POST api/email/send
@@ -64,8 +66,8 @@ namespace EmailService.Controllers
 
             string rawHtml = HtmlGenerator.GenerateRawHtml(template, request.Content);
             
-            Email email = new Email(toAddress, "TODO", ContentType.TEXT_HTML, rawHtml);
-            _emailService.SendEmail(_emailConfiguration, email);
+            Email email = new Email(toAddress, template.Subject, ContentType.TEXT_HTML, rawHtml);
+            _emailService.SendEmail(_emailConfiguration, _emailServiceConfiguration, email);
             
             return new OkResult();
         }
