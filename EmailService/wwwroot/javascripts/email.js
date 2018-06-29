@@ -3,13 +3,21 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
 import { createServerRenderer } from 'aspnet-prerendering';
+import Foobar from './custom/templates/foobar';
 
-const Email = (props) => (
-	<h1>Hello world!</h1>
-);
+const emailTemplates = {
+	"foobar": Foobar
+};
 
-const getRootComponent = (params) => {
-    return React.createElement(Email, {});
+const EmptyComponent = (props) => (<div></div>);
+
+const getTemplate = (props) => {
+	const key = props.templateName.toLowerCase();
+	return emailTemplates[key] || EmptyComponent;
+};
+
+const getRootComponent = (props) => {
+    return React.createElement(getTemplate(props.data), props.data);
 };
 
 const getHtml = (params) => {

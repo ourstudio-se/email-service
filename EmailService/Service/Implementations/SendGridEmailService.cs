@@ -1,4 +1,5 @@
-﻿using EmailService.Configuration;
+﻿using System;
+using EmailService.Configuration;
 using EmailService.Models;
 
 namespace EmailService.Service.Implementations
@@ -7,7 +8,7 @@ namespace EmailService.Service.Implementations
 	{
 		public void SendEmail(EmailConfiguration emailConfiguration, IEmailServiceConfiguration configuration, Email email)
 		{
-			throw new System.NotImplementedException();
+			Console.WriteLine("Email: " + email.Content);
 		}
 	}
 }

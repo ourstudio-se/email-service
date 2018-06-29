@@ -1,9 +1,7 @@
-﻿@using EmailService.ViewModels
-
-@{
+﻿@{
 Layout = "~/Views/_Layout.cshtml";
-
-var model = new EmailViewModel();
 }
 
-<div id="application-node" asp-prerender-module="wwwroot/build/default.bundle" asp-prerender-data="model"></div>
+@model EmailService.ViewModels.EmailViewModel
+
+<div id="application-node" asp-prerender-module="wwwroot/build/default.bundle" asp-prerender-data="@Model"></div>
