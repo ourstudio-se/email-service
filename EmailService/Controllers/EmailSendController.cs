@@ -51,7 +51,7 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult($"Invalid format of recipient email {request.To}.");
             }
 
-            Template template = _emailConfiguration.Templates.FirstOrDefault(d => d.Name.Equals(request.Template));
+            Template template = GetEmailTemplateByName(request.Template);
 
             bool isInvalidTemplate = template == null;
 
@@ -61,12 +61,24 @@ namespace EmailService.Controllers
             }
 
             EmailViewModel emailViewModel = new EmailViewModel() {TemplateName = template.Name, Content = request.Content};
-            string rawHtml = await _htmlGeneratorService.GetRawHtmlAsync("~/View/Email/Index.cshtml", emailViewModel);
+            string rawHtml = await _htmlGeneratorService.GetRawHtmlAsync("Email/Index", emailViewModel);
+
+            bool hasNoRawHtml = rawHtml == null;
+
+            if (hasNoRawHtml)
+            {
+                return new BadRequestObjectResult("Internal error.");
+            }
             
             Email email = new Email(toAddress, template.Subject, ContentType.TEXT_HTML, rawHtml);
             _emailService.SendEmail(_emailConfiguration, _emailServiceConfiguration, email);
             
             return new OkResult();
+        }
+
+        private Template GetEmailTemplateByName(string name)
+        {
+            return _emailConfiguration.Templates.FirstOrDefault(d => d.Name.ToLower().Equals(name.ToLower()));
         }
 
         private bool IsValidEmailRequest(EmailSendRequest request)

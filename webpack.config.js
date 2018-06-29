@@ -1,6 +1,7 @@
 const path = require('path');
 const AssetsPlugin = require('assets-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CleanPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
@@ -12,38 +13,31 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, './EmailService', 'wwwroot', 'build'),
         filename: '[name].bundle.js',
-        publicPath: '/build/'
+        libraryTarget: "commonjs"
     },
     module: {
         rules: [
             {
                 test: /\.js$/,
                 exclude: /node_modules\/(?!(([^\/]+?\/){1,2}(src|es6)))/,
-                use: [{
+                use: [ {
                     loader: 'babel-loader',
                     options: {
                         presets: [
-                            ["es2015", { "loose": true, "modules": false }],
-                            ["react"],
-                            ["stage-0"]
+                            [ "env", { "loose": true, "modules": false } ],
+                            [ "react" ],
+                            [ "stage-0" ]
                         ],
                         plugins: [
                             "transform-decorators-legacy"
                         ]
                     }
-                }],
+                } ],
             }
         ],
     },
     plugins: [
-        new AssetsPlugin({
-            filename: 'webpack.assets.json',
-            path: path.resolve(__dirname, './EmailService', 'wwwroot', 'build'),
-            prettyPrint: true
-        }),
-        new ExtractTextPlugin({
-            filename: '[name].bundle.css',
-            allChunks: true,
-        })
+        new CleanPlugin('VcsPageApi/wwwroot/build')
     ],
+    target: "node"
 };

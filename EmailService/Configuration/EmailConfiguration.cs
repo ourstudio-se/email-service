@@ -11,7 +11,7 @@ namespace EmailService.Configuration
 		public string FromName { get; set; }
 		public Template[] Templates { get; set; }
 
-		private const string EMAIL_CONFIGURATION_PATH = "EmailConfiguration.json";
+		private const string EMAIL_CONFIGURATION_PATH = "Configuration/EmailConfiguration.json";
 
 		private EmailConfiguration()
 		{
