@@ -1,4 +1,5 @@
-﻿namespace EmailService.Models
+﻿
+namespace EmailService.Models
 {
 	public class Template
 	{

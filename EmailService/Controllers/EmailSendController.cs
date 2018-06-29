@@ -58,13 +58,6 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult($"A template with the name {request.Template} does not exist.");
             }
 
-            bool isInvalidContent = !TemplateContentValidator.IsValidContentForTemplate(template, request.Content);
-
-            if (isInvalidContent)
-            {
-                return new BadRequestObjectResult("The content provided does not match the arguments needed for the template.");
-            }
-
             string rawHtml = HtmlGenerator.GenerateRawHtml(template, request.Content);
             
             Email email = new Email(toAddress, template.Subject, ContentType.TEXT_HTML, rawHtml);
