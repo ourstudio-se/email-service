@@ -1,4 +1,5 @@
 EmailConfiguration.json
+EmailService/wwwroot/build/*
 
 
 # Source https://github.com/github/gitignore/blob/master/VisualStudio.gitignore

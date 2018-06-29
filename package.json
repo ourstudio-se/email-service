@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "lint": "yarn run eslint src/javascripts/",
-    "watch": "webpack --mode development --config webpack.config.js --progress --profile --colors --watch",
+    "watch": "webpack --mode development --config webpack.config.js --progress --profile --colors --watch"
   },
   "author": "Robin Sveningson",
   "devDependencies": {
