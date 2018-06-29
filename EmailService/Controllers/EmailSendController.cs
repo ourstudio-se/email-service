@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Mail;
+using EmailService.Configuration;
 using EmailService.Dtos.Requests;
 using EmailService.Models;
 using EmailService.Service;
@@ -48,7 +49,7 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult($"Invalid format of recipient email {request.To}.");
             }
 
-            Template template = _templatingService.GetTemplate(request.Template);
+            Template template = _templatingService.GetTemplate(_emailConfiguration, request.Template);
 
             bool isInvalidTemplate = template == null;
 

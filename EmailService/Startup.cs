@@ -1,4 +1,5 @@
-﻿using EmailService.Service;
+﻿using EmailService.Configuration;
+using EmailService.Service;
 using EmailService.Service.Implementations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

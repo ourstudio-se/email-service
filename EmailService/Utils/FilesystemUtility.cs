@@ -7,10 +7,15 @@ namespace EmailService.Utils
 	{
 		public static T ReadJson<T>(string path)
 		{
-			string text = File.ReadAllText(path);
+			string text = ReadFile(path);
 			JObject json = JObject.Parse(text);
 
 			return json.ToObject<T>();
+		}
+
+		public static string ReadFile(string path)
+		{
+			return File.ReadAllText(path);
 		}
 	}
 }

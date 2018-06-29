@@ -1,4 +1,5 @@
-﻿using EmailService.Models;
+﻿using EmailService.Configuration;
+using EmailService.Models;
 
 namespace EmailService.Service
 {
