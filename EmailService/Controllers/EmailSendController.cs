@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using EmailService.Configuration;
 using EmailService.Dtos.Requests;
 using EmailService.Models;
+using EmailService.Properties;
 using EmailService.Service;
 using EmailService.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -15,14 +15,14 @@ namespace EmailService.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly EmailConfiguration _emailConfiguration;
+        private readonly EmailProperties _emailProperties;
         private readonly IEmailService _emailService;
         private readonly IEmailServiceConfiguration _emailServiceConfiguration;
         private readonly IHtmlGeneratorService _htmlGeneratorService;
         
-        public ValuesController(EmailConfiguration emailConfiguration, IEmailService emailService, IEmailServiceConfiguration emailServiceConfiguration, IHtmlGeneratorService htmlGeneratorService)
+        public ValuesController(EmailProperties emailProperties, IEmailService emailService, IEmailServiceConfiguration emailServiceConfiguration, IHtmlGeneratorService htmlGeneratorService)
         {
-            _emailConfiguration = emailConfiguration;
+            _emailProperties = emailProperties;
             _emailService = emailService;
             _emailServiceConfiguration = emailServiceConfiguration;
             _htmlGeneratorService = htmlGeneratorService;
@@ -71,14 +71,14 @@ namespace EmailService.Controllers
             }
             
             Email email = new Email(toAddress, template.Subject, ContentType.TEXT_HTML, rawHtml);
-            _emailService.SendEmail(_emailConfiguration, _emailServiceConfiguration, email);
+            _emailService.SendEmail(_emailProperties, _emailServiceConfiguration, email);
             
             return new OkResult();
         }
 
         private Template GetEmailTemplateByName(string name)
         {
-            return _emailConfiguration.Templates.FirstOrDefault(d => d.Name.ToLower().Equals(name.ToLower()));
+            return _emailProperties.Templates.FirstOrDefault(d => d.Name.ToLower().Equals(name.ToLower()));
         }
 
         private bool IsValidEmailRequest(EmailSendRequest request)

@@ -1,10 +1,10 @@
-﻿using EmailService.Configuration;
-using EmailService.Models;
+﻿using EmailService.Models;
+using EmailService.Properties;
 
 namespace EmailService.Service
 {
 	public interface IEmailService
 	{
-		void SendEmail(EmailConfiguration emailConfiguration, IEmailServiceConfiguration configuration, Email email);
+		void SendEmail(EmailProperties emailProperties, IEmailServiceConfiguration configuration, Email email);
 	}
 }

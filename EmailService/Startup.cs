@@ -1,4 +1,4 @@
-﻿using EmailService.Configuration;
+﻿using EmailService.Properties;
 using EmailService.Service;
 using EmailService.Service.Implementations;
 using Microsoft.AspNetCore.Builder;
@@ -23,7 +23,7 @@ namespace EmailService
             services.AddScoped<IEmailService, SendGridEmailService>();
             services.AddScoped<IHtmlGeneratorService, HtmlGeneratorService>();
 
-            services.AddSingleton(EmailConfiguration.CreateInstance());
+            services.AddSingleton(EmailProperties.CreateInstance());
                 
             services.AddMvc();
         }

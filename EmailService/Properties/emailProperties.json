@@ -1,0 +1,11 @@
+{
+	"emailServiceApiKey": "",
+	"fromAddress": "robin@ourstudio.se",
+	"fromName": "Robin",
+	"templates": [
+		{
+			"name": "Foobar",
+			"subject": "Test email woop wooop!"
+		}
+	]
+}
