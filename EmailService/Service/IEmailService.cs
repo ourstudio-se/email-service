@@ -1,10 +1,11 @@
-﻿using EmailService.Models;
+﻿using System.Threading.Tasks;
+using EmailService.Models;
 using EmailService.Properties;
 
 namespace EmailService.Service
 {
 	public interface IEmailService
 	{
-		void SendEmail(EmailProperties emailProperties, IEmailServiceConfiguration configuration, Email email);
+		Task SendEmailAsync(EmailProperties emailProperties, IEmailServiceDefinition definition, Email email);
 	}
 }

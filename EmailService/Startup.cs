@@ -19,8 +19,8 @@ namespace EmailService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IEmailServiceConfiguration, SendGridEmailServiceConfiguration>();
-            services.AddScoped<IEmailService, SendGridEmailService>();
+            services.AddScoped<IEmailServiceDefinition, SendGridEmailServiceDefinition>();
+            services.AddScoped<IEmailService, HttpPostEmailService>();
             services.AddScoped<IHtmlGeneratorService, HtmlGeneratorService>();
 
             services.AddSingleton(EmailProperties.CreateInstance());

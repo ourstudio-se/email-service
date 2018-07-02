@@ -6,6 +6,7 @@ namespace EmailService.Properties
 {
 	public class EmailProperties
 	{
+		public string EmailServiceApiKey { get; set; }
 		public string FromAddress { get; set; }
 		public string FromName { get; set; }
 		public Template[] Templates { get; set; }

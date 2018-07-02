@@ -17,14 +17,14 @@ namespace EmailService.Controllers
     {
         private readonly EmailProperties _emailProperties;
         private readonly IEmailService _emailService;
-        private readonly IEmailServiceConfiguration _emailServiceConfiguration;
+        private readonly IEmailServiceDefinition _emailServiceDefinition;
         private readonly IHtmlGeneratorService _htmlGeneratorService;
         
-        public ValuesController(EmailProperties emailProperties, IEmailService emailService, IEmailServiceConfiguration emailServiceConfiguration, IHtmlGeneratorService htmlGeneratorService)
+        public ValuesController(EmailProperties emailProperties, IEmailService emailService, IEmailServiceDefinition emailServiceDefinition, IHtmlGeneratorService htmlGeneratorService)
         {
             _emailProperties = emailProperties;
             _emailService = emailService;
-            _emailServiceConfiguration = emailServiceConfiguration;
+            _emailServiceDefinition = emailServiceDefinition;
             _htmlGeneratorService = htmlGeneratorService;
         }
         
@@ -71,9 +71,16 @@ namespace EmailService.Controllers
             }
             
             Email email = new Email(toAddress, template.Subject, ContentType.TEXT_HTML, rawHtml);
-            _emailService.SendEmail(_emailProperties, _emailServiceConfiguration, email);
-            
-            return new OkResult();
+
+            try
+            {
+                await _emailService.SendEmailAsync(_emailProperties, _emailServiceDefinition, email);
+                return new OkResult();
+            }
+            catch (Exception e)
+            {
+                return new BadRequestObjectResult("Failed to send email.");
+            }
         }
 
         private Template GetEmailTemplateByName(string name)
