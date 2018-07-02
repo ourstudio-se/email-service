@@ -13,14 +13,14 @@ namespace EmailService.Controllers
 {
     [Route("api/email/send")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class EmailSendController : ControllerBase
     {
         private readonly EmailProperties _emailProperties;
         private readonly IEmailService _emailService;
         private readonly IEmailServiceDefinition _emailServiceDefinition;
         private readonly IHtmlGeneratorService _htmlGeneratorService;
         
-        public ValuesController(EmailProperties emailProperties, IEmailService emailService, IEmailServiceDefinition emailServiceDefinition, IHtmlGeneratorService htmlGeneratorService)
+        public EmailSendController(EmailProperties emailProperties, IEmailService emailService, IEmailServiceDefinition emailServiceDefinition, IHtmlGeneratorService htmlGeneratorService)
         {
             _emailProperties = emailProperties;
             _emailService = emailService;
@@ -40,11 +40,11 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult("Invalid email payload.");
             }
 
-            MailAddress toAddress;
+            MailAddress[] toAddresses;
 
             try
             {
-                toAddress = new MailAddress(request.To);
+                toAddresses = request.To.Select(t => new MailAddress(t)).ToArray();
             }
             catch (Exception exception)
             {
@@ -70,7 +70,7 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult("Internal error.");
             }
             
-            Email email = new Email(toAddress, template.Subject, ContentType.TEXT_HTML, rawHtml);
+            Email email = new Email(toAddresses, template.Subject, ContentType.TEXT_HTML, rawHtml);
 
             try
             {
@@ -90,7 +90,7 @@ namespace EmailService.Controllers
 
         private bool IsValidEmailRequest(EmailSendRequest request)
         {
-            bool hasTo = !string.IsNullOrWhiteSpace(request.To);
+            bool hasTo = request.To != null && request.To.Length > 0;
             bool hasTemplate = !string.IsNullOrWhiteSpace(request.Template);
             bool hasContent = request.Content != null;
 

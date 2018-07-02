@@ -1,4 +1,5 @@
-﻿using EmailService.Models;
+﻿using System.Linq;
+using EmailService.Models;
 using EmailService.Properties;
 using EmailService.Utils;
 using Newtonsoft.Json;
@@ -16,8 +17,9 @@ namespace EmailService.Service.Implementations
 		public string GetBody(EmailProperties emailProperties, Email email)
 		{
 			string contentType = ContentTypeUtility.GetContentTypeString(email.ContentType);
+			string[] receivers = email.To.Select(t => t.ToString()).ToArray();
 			
-			return new SendGridBodyGenerator().Generate(email.To.ToString(), email.Subject, emailProperties.FromName,
+			return new SendGridBodyGenerator().Generate(receivers, email.Subject, emailProperties.FromName,
 				emailProperties.FromAddress, contentType, email.Content);
 		}
 
@@ -60,12 +62,10 @@ namespace EmailService.Service.Implementations
 		   }
 		 */
 		
-		public string Generate(string receiverEmail, string subject, string fromName, string fromEmail,
+		public string Generate(string[] receiverEmails, string subject, string fromName, string fromEmail,
 			string emailContentType, string emailContent)
 		{
-			SendGridReceiver receiver = new SendGridReceiver() { Email = receiverEmail };
-			
-			SendGridReceiver[] receiverArray = new[] { receiver };
+			SendGridReceiver[] receiverArray = receiverEmails.Select(r => new SendGridReceiver() { Email = r}).ToArray();
 			
 			SendGridPersonalization personalization = new SendGridPersonalization() { Subject = subject, To = receiverArray};
 			SendGridContent content = new SendGridContent() { Type = emailContentType, Value = emailContent };

@@ -37,7 +37,7 @@ module.exports = {
         ],
     },
     plugins: [
-        new CleanPlugin('VcsPageApi/wwwroot/build')
+        new CleanPlugin('EmailService/wwwroot/build')
     ],
     target: "node"
 };
