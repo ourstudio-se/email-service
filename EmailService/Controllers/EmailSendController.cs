@@ -8,6 +8,7 @@ using EmailService.Properties;
 using EmailService.Service;
 using EmailService.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace EmailService.Controllers
 {
@@ -60,7 +61,9 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult($"A template with the name {request.Template} does not exist.");
             }
 
-            EmailViewModel emailViewModel = new EmailViewModel() {TemplateName = template.Name, Content = request.Content};
+            JObject fullContent = CreateFullContent(request.Content, request.PersonalContent);
+
+            EmailViewModel emailViewModel = new EmailViewModel() {TemplateName = template.Name, Content = fullContent};
             string rawHtml = await _htmlGeneratorService.GetRawHtmlAsync("Email/Index", emailViewModel);
 
             bool hasNoRawHtml = rawHtml == null;
@@ -81,6 +84,14 @@ namespace EmailService.Controllers
             {
                 return new BadRequestObjectResult("Failed to send email.");
             }
+        }
+
+        private JObject CreateFullContent(JObject content, JObject personalContent)
+        {
+            content.Merge(personalContent,
+                new JsonMergeSettings() {MergeArrayHandling = MergeArrayHandling.Union});
+            
+            return content;
         }
 
         private Template GetEmailTemplateByName(string name)
