@@ -9,11 +9,6 @@ namespace EmailService.Service.Implementations
 {
 	public class SendGridEmailServiceDefinition : IEmailServiceDefinition
 	{
-		public string GetUrl()
-		{
-			return "https://api.sendgrid.com/v3/mail/send";
-		}
-
 		public string GetBody(EmailProperties emailProperties, Email email)
 		{
 			string contentType = ContentTypeUtility.GetContentTypeString(email.ContentType);

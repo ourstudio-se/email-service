@@ -14,7 +14,7 @@ namespace EmailService.Service.Implementations
 		
 		public async Task SendEmailAsync(EmailProperties emailProperties, IEmailServiceDefinition definition, Email email)
 		{
-			string url = definition.GetUrl();
+			string url = emailProperties.EmailServiceUrl;
 			string body = definition.GetBody(emailProperties, email);
 
 			string authScheme = definition.GetAuthenticationHeaderScheme();
@@ -24,6 +24,7 @@ namespace EmailService.Service.Implementations
 			_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 			
 			StringContent stringContent = new StringContent(body, Encoding.UTF8, "application/json");
+			
 			HttpResponseMessage response = await _httpClient.PostAsync(url, stringContent);
 
 			if (!response.IsSuccessStatusCode)

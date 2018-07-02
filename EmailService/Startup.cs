@@ -1,4 +1,5 @@
-﻿using EmailService.Properties;
+﻿using System;
+using EmailService.Properties;
 using EmailService.Service;
 using EmailService.Service.Implementations;
 using Microsoft.AspNetCore.Builder;
@@ -19,13 +20,29 @@ namespace EmailService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IEmailServiceDefinition, SendGridEmailServiceDefinition>();
-            services.AddScoped<IEmailService, HttpPostEmailService>();
+            EmailProperties emailProperties = EmailProperties.CreateInstance();
+            
+            services.AddSingleton(emailProperties);
             services.AddScoped<IHtmlGeneratorService, HtmlGeneratorService>();
 
-            services.AddSingleton(EmailProperties.CreateInstance());
+            AddEmailService(emailProperties, services);
                 
             services.AddMvc();
+        }
+
+        private void AddEmailService(EmailProperties emailProperties, IServiceCollection services)
+        {
+            bool isSendgrid = emailProperties.EmailService.Equals("sendgrid");
+
+            if (isSendgrid)
+            {
+                services.AddScoped<IEmailServiceDefinition, SendGridEmailServiceDefinition>();
+                services.AddScoped<IEmailService, HttpPostEmailService>();
+            }
+            else
+            {
+                throw new ArgumentException("A valid email service was not provided.");
+            }
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

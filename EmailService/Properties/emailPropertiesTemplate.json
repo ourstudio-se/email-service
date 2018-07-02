@@ -1,7 +1,11 @@
 {
+	"emailService": "",
+	"emailServiceUrl": "",
 	"emailServiceApiKey": "",
+	
 	"fromAddress": "",
 	"fromName": "",
+	
 	"templates": [
 	]
 }
