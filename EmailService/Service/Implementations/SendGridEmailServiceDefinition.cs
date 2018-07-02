@@ -1,6 +1,7 @@
 ﻿using EmailService.Models;
 using EmailService.Properties;
 using EmailService.Utils;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace EmailService.Service.Implementations
@@ -20,14 +21,14 @@ namespace EmailService.Service.Implementations
 				emailProperties.FromAddress, contentType, email.Content);
 		}
 
-		public string GetAuthenticationHeaderKey()
+		public string GetAuthenticationHeaderScheme()
 		{
-			return "Authorization";
+			return "Bearer";
 		}
 
 		public string GetAuthenticationHeaderValue(EmailProperties emailProperties)
 		{
-			return $"Bearer {emailProperties.EmailServiceApiKey}";
+			return emailProperties.EmailServiceApiKey;
 		}
 	}
 
@@ -75,7 +76,7 @@ namespace EmailService.Service.Implementations
 			
 			SendGridBody body = new SendGridBody() { Personalizations = personalizations, From = sender, Content = contentArray};
 
-			return JObject.FromObject(body).ToString();
+			return JObject.FromObject(body).ToString(Formatting.None);
 		}
 	}
 

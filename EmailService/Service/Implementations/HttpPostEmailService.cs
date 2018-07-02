@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using EmailService.Models;
 using EmailService.Properties;
@@ -15,12 +17,13 @@ namespace EmailService.Service.Implementations
 			string url = definition.GetUrl();
 			string body = definition.GetBody(emailProperties, email);
 
-			string authKey = definition.GetAuthenticationHeaderKey();
+			string authScheme = definition.GetAuthenticationHeaderScheme();
 			string authValue = definition.GetAuthenticationHeaderValue(emailProperties);
 			
-			StringContent stringContent = new StringContent(body);
-			stringContent.Headers.Add(authKey, authValue);
-
+			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authValue);
+			_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+			
+			StringContent stringContent = new StringContent(body, Encoding.UTF8, "application/json");
 			HttpResponseMessage response = await _httpClient.PostAsync(url, stringContent);
 
 			if (!response.IsSuccessStatusCode)

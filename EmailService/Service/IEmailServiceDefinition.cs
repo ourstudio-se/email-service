@@ -8,7 +8,7 @@ namespace EmailService.Service
 		string GetUrl();
 		string GetBody(EmailProperties emailProperties, Email email);
 
-		string GetAuthenticationHeaderKey();
+		string GetAuthenticationHeaderScheme();
 		string GetAuthenticationHeaderValue(EmailProperties emailProperties);
 	}
 }
