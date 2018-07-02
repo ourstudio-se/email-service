@@ -12,7 +12,7 @@ namespace EmailService.Service.Implementations
 	{
 		private static readonly HttpClient _httpClient = new HttpClient();
 		
-		public async Task SendEmailAsync(EmailProperties emailProperties, IEmailServiceDefinition definition, Email email)
+		public async Task<string> SendEmailAsync(EmailProperties emailProperties, IEmailServiceDefinition definition, Email email)
 		{
 			string url = emailProperties.EmailServiceUrl;
 			string body = definition.GetBody(emailProperties, email);
@@ -31,6 +31,8 @@ namespace EmailService.Service.Implementations
 			{
 				throw new Exception("Failed to send email.");
 			}
+
+			return definition.GetIdFromResponse(response);
 		}
 	}
 }

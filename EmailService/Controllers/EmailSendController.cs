@@ -20,13 +20,17 @@ namespace EmailService.Controllers
         private readonly IEmailService _emailService;
         private readonly IEmailServiceDefinition _emailServiceDefinition;
         private readonly IHtmlGeneratorService _htmlGeneratorService;
+        private readonly IEmailLoggingService _emailLoggingService;
         
-        public EmailSendController(EmailProperties emailProperties, IEmailService emailService, IEmailServiceDefinition emailServiceDefinition, IHtmlGeneratorService htmlGeneratorService)
+        public EmailSendController(EmailProperties emailProperties, IEmailService emailService,
+            IEmailServiceDefinition emailServiceDefinition, IHtmlGeneratorService htmlGeneratorService,
+            IEmailLoggingService emailLoggingService)
         {
             _emailProperties = emailProperties;
             _emailService = emailService;
             _emailServiceDefinition = emailServiceDefinition;
             _htmlGeneratorService = htmlGeneratorService;
+            _emailLoggingService = emailLoggingService;
         }
         
         // POST api/email/send
@@ -77,7 +81,13 @@ namespace EmailService.Controllers
 
             try
             {
-                await _emailService.SendEmailAsync(_emailProperties, _emailServiceDefinition, email);
+                string emailServiceId = await _emailService.SendEmailAsync(_emailProperties, _emailServiceDefinition,
+                    email);
+
+                string[] receiverEmails = email.To.Select(t => t.ToString()).ToArray();
+                
+                _emailLoggingService.Log(emailServiceId, receiverEmails, template.Name, request.PersonalContent,
+                    request.Content);
                 return new OkResult();
             }
             catch (Exception e)
@@ -88,8 +98,13 @@ namespace EmailService.Controllers
 
         private JObject CreateFullContent(JObject content, JObject personalContent)
         {
-            content.Merge(personalContent,
-                new JsonMergeSettings() {MergeArrayHandling = MergeArrayHandling.Union});
+            JObject newObject = new JObject();
+            
+            newObject.Merge(content,
+                new JsonMergeSettings() { MergeArrayHandling = MergeArrayHandling.Union });
+            
+            newObject.Merge(personalContent,
+                new JsonMergeSettings() { MergeArrayHandling = MergeArrayHandling.Union });
             
             return content;
         }

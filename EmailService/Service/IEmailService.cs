@@ -6,6 +6,6 @@ namespace EmailService.Service
 {
 	public interface IEmailService
 	{
-		Task SendEmailAsync(EmailProperties emailProperties, IEmailServiceDefinition definition, Email email);
+		Task<string> SendEmailAsync(EmailProperties emailProperties, IEmailServiceDefinition definition, Email email);
 	}
 }

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using EmailService.Models;
 using EmailService.Properties;
 using EmailService.Utils;
@@ -26,6 +28,21 @@ namespace EmailService.Service.Implementations
 		public string GetAuthenticationHeaderValue(EmailProperties emailProperties)
 		{
 			return emailProperties.EmailServiceApiKey;
+		}
+
+		public string GetIdFromResponse(HttpResponseMessage response)
+		{
+			IEnumerable<string> headerValues;
+			bool hasHeader = response.Headers.TryGetValues("X-Message-Id", out headerValues);
+
+			if (hasHeader)
+			{
+				return headerValues.First();
+			}
+			else
+			{
+				return null;
+			}
 		}
 	}
 

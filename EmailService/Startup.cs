@@ -24,6 +24,7 @@ namespace EmailService
             
             services.AddSingleton(emailProperties);
             services.AddScoped<IHtmlGeneratorService, HtmlGeneratorService>();
+            services.AddScoped<IEmailLoggingService, DefaultEmailLogginService>();
 
             AddEmailService(emailProperties, services);
                 
