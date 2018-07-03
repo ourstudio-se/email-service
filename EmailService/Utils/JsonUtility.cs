@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
@@ -7,6 +6,19 @@ namespace EmailService.Utils
 {
 	public static class JsonUtility
 	{
+		public static JObject GetMergedJson(JObject first, JObject second)
+		{
+			JObject newObject = new JObject();
+            
+			newObject.Merge(first,
+				new JsonMergeSettings() { MergeArrayHandling = MergeArrayHandling.Union });
+            
+			newObject.Merge(second,
+				new JsonMergeSettings() { MergeArrayHandling = MergeArrayHandling.Union });
+            
+			return newObject;
+		}
+		
 		public static void TraverseLeaves(JObject json, Func<string, string> callback)
 		{
 			TraverseLeavesRecursive(json, callback);

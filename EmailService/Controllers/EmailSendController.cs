@@ -3,9 +3,11 @@ using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using EmailService.Dtos.Requests;
+using EmailService.Dtos.Requests.Factories;
 using EmailService.Models;
 using EmailService.Properties;
 using EmailService.Service;
+using EmailService.Utils;
 using EmailService.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -35,7 +37,7 @@ namespace EmailService.Controllers
         [Route("", Name = "SendEmail")]
         public async Task<IActionResult> Post([FromBody] EmailSendRequest request)
         {
-            bool isValidEmailRequest = IsValidEmailRequest(request);
+            bool isValidEmailRequest = EmailSendRequestFactory.IsValidEmailRequest(request);
 
             if (!isValidEmailRequest)
             {
@@ -53,7 +55,7 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult($"Invalid format of recipient email {request.To}.");
             }
 
-            Template template = GetEmailTemplateByName(request.Template);
+            Template template = TemplateUtility.GetTemplateByName(_emailProperties, request.Template);
 
             bool isInvalidTemplate = template == null;
 
@@ -62,7 +64,7 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult($"A template with the name {request.Template} does not exist.");
             }
 
-            JObject fullContent = CreateFullContent(request.Content, request.PersonalContent);
+            JObject fullContent = JsonUtility.GetMergedJson(request.Content, request.PersonalContent);
 
             EmailViewModel emailViewModel = new EmailViewModel() {TemplateName = template.Name, Content = fullContent};
             string rawHtml = await _htmlGeneratorService.GetRawHtmlAsync("Email/Index", emailViewModel);
@@ -100,33 +102,6 @@ namespace EmailService.Controllers
             {
                 return new BadRequestObjectResult("Email was sent successfully, but logging failed unexpectedly.");
             }
-        }
-
-        private JObject CreateFullContent(JObject content, JObject personalContent)
-        {
-            JObject newObject = new JObject();
-            
-            newObject.Merge(content,
-                new JsonMergeSettings() { MergeArrayHandling = MergeArrayHandling.Union });
-            
-            newObject.Merge(personalContent,
-                new JsonMergeSettings() { MergeArrayHandling = MergeArrayHandling.Union });
-            
-            return newObject;
-        }
-
-        private Template GetEmailTemplateByName(string name)
-        {
-            return _emailProperties.Templates.FirstOrDefault(d => d.Name.ToLower().Equals(name.ToLower()));
-        }
-
-        private bool IsValidEmailRequest(EmailSendRequest request)
-        {
-            bool hasTo = request.To != null && request.To.Length > 0;
-            bool hasTemplate = !string.IsNullOrWhiteSpace(request.Template);
-            bool hasContent = request.Content != null;
-
-            return hasTo && hasTemplate && hasContent;
         }
     }
 }
