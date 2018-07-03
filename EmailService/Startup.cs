@@ -1,10 +1,12 @@
 ﻿using System;
+using EmailService.Database;
 using EmailService.Properties;
 using EmailService.Service;
 using EmailService.Service.Implementations;
 using EmailService.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -31,19 +33,28 @@ namespace EmailService
 
             services.AddSingleton(serviceProperties);
             AddEmailService(serviceProperties, emailProperties, services);
+
+            bool isDatabaseLogging =
+                serviceProperties.SelectedLoggingType.Equals(ServiceProperties.LoggingType.DATABASE);
+
+            if (isDatabaseLogging)
+            {
+                services.AddDbContext<DataContext>(options =>
+                    options.UseSqlServer(serviceProperties.LoggingDatabaseConnectionString));
+            }
                 
             services.AddMvc();
         }
 
         private ServiceProperties CreateServiceProperties()
         {
-            string selectedEmailService = Configuration.GetValue<string>("emailService");
-            string emailServiceUrl = Configuration.GetValue<string>("emailServiceUrl");
-            string emailServiceApiKey = Configuration.GetValue<string>("emailServiceApiKey");
+            string selectedEmailService = Configuration.GetValue<string>("EmailService");
+            string emailServiceUrl = Configuration.GetValue<string>("EmailServiceUrl");
+            string emailServiceApiKey = Configuration.GetValue<string>("EmailServiceApiKey");
             
-            string selectedLoggingType = Configuration.GetValue<string>("loggingType");
-            string loggingApiUrl = Configuration.GetValue<string>("loggingApiUrl");
-            string loggingDatabaseConnectionString = Configuration.GetValue<string>("loggingDatabaseConnectionString");
+            string selectedLoggingType = Configuration.GetValue<string>("LoggingType");
+            string loggingApiUrl = Configuration.GetValue<string>("LoggingApiUrl");
+            string loggingDatabaseConnectionString = Configuration.GetValue<string>("LoggingDatabaseConnectionString");
 
             ServiceProperties.EmailService? emailService =
                 ServicePropertiesUtility.ParseEmailService(selectedEmailService);
@@ -89,6 +100,19 @@ namespace EmailService
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            bool shouldMigrateDbOnStartup = Configuration.GetValue<bool>("MigrateDbOnStartup");
+
+            if (shouldMigrateDbOnStartup)
+            {
+                try
+                {
+                    app.ApplicationServices.GetRequiredService<DataContext>().Database.Migrate();
+                }
+                catch (Exception e)
+                {
+                }
+            }
+            
             app.UseMvc();
         }
     }
