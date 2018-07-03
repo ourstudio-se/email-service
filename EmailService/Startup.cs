@@ -114,7 +114,7 @@ namespace EmailService
             {
                 try
                 {
-                    app.ApplicationServices.GetRequiredService<DataContext>().Database.Migrate();
+                    dataContext.Database.Migrate();
                 }
                 catch (Exception e)
                 {
