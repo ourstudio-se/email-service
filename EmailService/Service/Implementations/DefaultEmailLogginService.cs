@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,6 +11,7 @@ using EmailService.Database;
 using EmailService.Models;
 using EmailService.Properties;
 using EmailService.Utils;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -35,6 +38,8 @@ namespace EmailService.Service.Implementations
 			JObject obfuscatedPersonalContent = GetObfuscatedPersonalContent(personalContent);
 			string[] hashedEmailReceivers = GetHashedEmailReceivers(receivers);
 
+			string singleStringEmailReceivers = string.Join(", ", hashedEmailReceivers);
+
 			string nonFormattedObfuscatedPersonalContent = obfuscatedPersonalContent.ToString(Formatting.None);
 			string nonFormattedContent = content.ToString(Formatting.None);
 
@@ -43,7 +48,7 @@ namespace EmailService.Service.Implementations
 				Id = id,
 				EmailServiceId = emailServiceId,
 				Timestamp = timestamp,
-				To = hashedEmailReceivers,
+				To = singleStringEmailReceivers,
 				Template = template,
 				PersonalContent = nonFormattedObfuscatedPersonalContent,
 				Content = nonFormattedContent

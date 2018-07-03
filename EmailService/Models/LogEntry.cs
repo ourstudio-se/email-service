@@ -10,7 +10,7 @@ namespace EmailService.Models
 		
 		public DateTime Timestamp { get; set; }
 		
-		public string[] To { get; set; }
+		public string To { get; set; }
 		public string Template { get; set; }
 		
 		public string PersonalContent { get; set; }

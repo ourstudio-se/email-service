@@ -112,7 +112,7 @@ namespace EmailService.Controllers
             newObject.Merge(personalContent,
                 new JsonMergeSettings() { MergeArrayHandling = MergeArrayHandling.Union });
             
-            return content;
+            return newObject;
         }
 
         private Template GetEmailTemplateByName(string name)
