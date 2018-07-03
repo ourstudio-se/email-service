@@ -33,6 +33,11 @@ namespace EmailService.Controllers
 		}
 		
 		// GET api/email
+		
+		/// <summary>
+		/// Health check for the email service.
+		/// </summary>
+		/// <response code="200">The service is functional.</response>
 		[HttpGet]
 		[Route("", Name = "HealthCheck")]
 		public async Task<IActionResult> Get()
@@ -41,6 +46,18 @@ namespace EmailService.Controllers
 		}
 		
 		// GET api/email/{id}
+
+		/// <summary>
+		/// Return information about an email that has been sent by the service. This endpoint is only usable
+		/// if you are storing email logs with the database method.
+		/// </summary>
+		/// <param name="id">The id of the email log entry.</param>
+		/// <param name="receiversToTest">A JSON array containing receivers to test if they were receivers of the
+		/// email. Since the email receivers are hashed in the logs we can only know if someone was included in the email
+		/// or not, but not get a list of who were included. The output parameter "MatchedReceiversToTest" reflects
+		/// if the match was true or not.</param>
+		/// <response code="200">If the request was valid.</response>
+		/// <response code="400">If the request was bad.</response>
 		[HttpGet]
 		[Route("{id}", Name = "GetEmail")]
 		[ProducesResponseType(typeof(SentEmailResponse), 200)]
@@ -96,6 +113,14 @@ namespace EmailService.Controllers
 		}
 
 		// POST api/email
+		
+		/// <summary>
+		/// Preview what an email will look like, without actually sending the email.
+		/// </summary>
+		/// <param name="request">The email payload, which should be the same fromat as the payload to the /api/email/send
+		/// endpoint.</param>
+		/// <response code="200">The request is valid.</response>
+		/// <response code="400">The request is invalid.</response>
         [HttpPost]
         [Route("", Name = "PreviewEmail")]
         [ProducesResponseType(typeof(EmailPreviewResponse), 200)]
