@@ -11,14 +11,26 @@ namespace EmailService.Service.Implementations
 	public class HttpPostEmailService : IEmailService
 	{
 		private static readonly HttpClient _httpClient = new HttpClient();
-		
-		public async Task<string> SendEmailAsync(EmailProperties emailProperties, IEmailServiceDefinition definition, Email email)
-		{
-			string url = emailProperties.EmailServiceUrl;
-			string body = definition.GetBody(emailProperties, email);
 
-			string authScheme = definition.GetAuthenticationHeaderScheme();
-			string authValue = definition.GetAuthenticationHeaderValue(emailProperties);
+		private readonly ServiceProperties _serviceProperties;
+		private readonly IEmailServiceDefinition _emailServiceDefinition;
+		private readonly EmailProperties _emailProperties;
+
+		public HttpPostEmailService(ServiceProperties serviceProperties, IEmailServiceDefinition emailServiceDefinition,
+			EmailProperties emailProperties)
+		{
+			_serviceProperties = serviceProperties;
+			_emailServiceDefinition = emailServiceDefinition;
+			_emailProperties = emailProperties;
+		}
+		
+		public async Task<string> SendEmailAsync(Email email)
+		{
+			string url = _serviceProperties.EmailServiceUrl;
+			string body = _emailServiceDefinition.GetBody(_emailProperties, email);
+
+			string authScheme = _emailServiceDefinition.GetAuthenticationHeaderScheme();
+			string authValue = _emailServiceDefinition.GetAuthenticationHeaderValue(_serviceProperties);
 			
 			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authValue);
 			_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -32,7 +44,7 @@ namespace EmailService.Service.Implementations
 				throw new Exception("Failed to send email.");
 			}
 
-			return definition.GetIdFromResponse(response);
+			return _emailServiceDefinition.GetIdFromResponse(response);
 		}
 	}
 }

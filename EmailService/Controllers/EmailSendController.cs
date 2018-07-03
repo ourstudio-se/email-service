@@ -18,17 +18,14 @@ namespace EmailService.Controllers
     {
         private readonly EmailProperties _emailProperties;
         private readonly IEmailService _emailService;
-        private readonly IEmailServiceDefinition _emailServiceDefinition;
         private readonly IHtmlGeneratorService _htmlGeneratorService;
         private readonly IEmailLoggingService _emailLoggingService;
         
         public EmailSendController(EmailProperties emailProperties, IEmailService emailService,
-            IEmailServiceDefinition emailServiceDefinition, IHtmlGeneratorService htmlGeneratorService,
-            IEmailLoggingService emailLoggingService)
+            IHtmlGeneratorService htmlGeneratorService, IEmailLoggingService emailLoggingService)
         {
             _emailProperties = emailProperties;
             _emailService = emailService;
-            _emailServiceDefinition = emailServiceDefinition;
             _htmlGeneratorService = htmlGeneratorService;
             _emailLoggingService = emailLoggingService;
         }
@@ -79,20 +76,29 @@ namespace EmailService.Controllers
             
             Email email = new Email(toAddresses, template.Subject, ContentType.TEXT_HTML, rawHtml);
 
+            string emailServiceId;
+
             try
             {
-                string emailServiceId = await _emailService.SendEmailAsync(_emailProperties, _emailServiceDefinition,
-                    email);
-
-                string[] receiverEmails = email.To.Select(t => t.ToString()).ToArray();
-                
-                _emailLoggingService.Log(emailServiceId, receiverEmails, template.Name, request.PersonalContent,
-                    request.Content);
-                return new OkResult();
+                emailServiceId = await _emailService.SendEmailAsync(email);
             }
             catch (Exception e)
             {
                 return new BadRequestObjectResult("Failed to send email.");
+            }
+
+            try
+            {
+                string[] receiverEmails = email.To.Select(t => t.ToString()).ToArray();
+
+                await _emailLoggingService.LogAsync(emailServiceId, receiverEmails, template.Name,
+                    request.PersonalContent, request.Content);
+
+                return new OkResult();
+            }
+            catch (Exception e)
+            {
+                return new BadRequestObjectResult("Email was sent successfully, but logging failed unexpectedly.");
             }
         }
 

@@ -25,9 +25,9 @@ namespace EmailService.Service.Implementations
 			return "Bearer";
 		}
 
-		public string GetAuthenticationHeaderValue(EmailProperties emailProperties)
+		public string GetAuthenticationHeaderValue(ServiceProperties serviceProperties)
 		{
-			return emailProperties.EmailServiceApiKey;
+			return serviceProperties.EmailServiceApiKey;
 		}
 
 		public string GetIdFromResponse(HttpResponseMessage response)

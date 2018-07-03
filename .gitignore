@@ -1,5 +1,6 @@
 emailProperties.json
 EmailService/wwwroot/build/*
+EmailService/appsettings.Development.json
 
 
 # Source https://github.com/github/gitignore/blob/master/VisualStudio.gitignore

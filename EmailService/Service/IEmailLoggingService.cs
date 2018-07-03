@@ -1,9 +1,12 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Threading.Tasks;
+using EmailService.Properties;
+using Newtonsoft.Json.Linq;
 
 namespace EmailService.Service
 {
 	public interface IEmailLoggingService
 	{
-		void Log(string emailServiceId, string[] receivers, string template, JObject personalContent, JObject content);
+		Task LogAsync(string emailServiceId, string[] receivers, string template, JObject personalContent,
+			JObject content);
 	}
 }
