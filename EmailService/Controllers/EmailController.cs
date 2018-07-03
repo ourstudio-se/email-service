@@ -22,11 +22,14 @@ namespace EmailService.Controllers
 	{
 		private readonly IHtmlGeneratorService _htmlGeneratorService;
 		private readonly EmailProperties _emailProperties;
+		private readonly IEmailLoggingService _loggingService;
 
-		public EmailController(IHtmlGeneratorService htmlGeneratorService, EmailProperties emailProperties)
+		public EmailController(IHtmlGeneratorService htmlGeneratorService, EmailProperties emailProperties,
+			IEmailLoggingService emailLoggingService)
 		{
 			_htmlGeneratorService = htmlGeneratorService;
 			_emailProperties = emailProperties;
+			_loggingService = emailLoggingService;
 		}
 		
 		// GET api/email
@@ -39,12 +42,59 @@ namespace EmailService.Controllers
 		
 		// GET api/email/{id}
 		[HttpGet]
-		[Route("", Name = "GetEmail")]
-		public async Task<IActionResult> Get([FromRoute] string id)
+		[Route("{id}", Name = "GetEmail")]
+		[ProducesResponseType(typeof(SentEmailResponse), 200)]
+		public async Task<IActionResult> Get([FromRoute] string id,
+			[FromQuery(Name = "receiversToTest")] string receiversToTest = null)
 		{
-			return new OkResult();
+			bool isValidId = Guid.TryParse(id, out Guid guid);
+
+			if (!isValidId)
+			{
+				return new BadRequestObjectResult("The id specified had an invalid format.");
+			}
+
+			LogEntry logEntry = await _loggingService.GetAsync(guid);
+
+			bool noLogEntryFound = logEntry == null;
+
+			if (noLogEntryFound)
+			{
+				return new BadRequestObjectResult("No logs found for the id provided.");
+			}
+			
+			JObject content = JObject.Parse(logEntry.Content);
+			JObject personalContent = JObject.Parse(logEntry.PersonalContent);
+			
+			EmailSendRequest request = new EmailSendRequest()
+			{
+				Content = content,
+				PersonalContent = personalContent,
+				Template = logEntry.Template,
+				To = new string[0]
+			};
+
+			OkObjectResult actionResult = await Post(request) as OkObjectResult;
+			EmailPreviewResponse previewResponse = (EmailPreviewResponse) actionResult.Value;
+
+			string[] receiversToTestArray = RestUtility.GetArrayQueryParam(receiversToTest);
+
+			bool hasReceiversToTestArray = receiversToTestArray != null && receiversToTestArray.Length > 0;
+			bool isReceiversMatch;
+
+			if (hasReceiversToTestArray)
+			{
+				isReceiversMatch = TestReceiversMatch(receiversToTestArray, logEntry);
+			}
+			else
+			{
+				isReceiversMatch = false;
+			}
+
+			SentEmailResponse response = SentEmailResponseFactory.Create(logEntry, previewResponse, isReceiversMatch);
+			return new OkObjectResult(response);
 		}
-		
+
 		// POST api/email
         [HttpPost]
         [Route("", Name = "PreviewEmail")]
@@ -95,5 +145,29 @@ namespace EmailService.Controllers
 	        
 	        return new OkObjectResult(response);
         }
+
+		private bool TestReceiversMatch(string[] receiversToTestArray, LogEntry logEntry)
+		{
+			string[] logEntryTo = ArrayUtility.GetArrayFromCommaSeparatedString(logEntry.To);
+			bool isSameSize = logEntryTo.Length == receiversToTestArray.Length;
+
+			if (!isSameSize)
+			{
+				return false;
+			}
+
+			foreach (string receiver in receiversToTestArray)
+			{
+				string hashedReceiver = HashUtility.GetStringHash(receiver);
+				bool isReceiverInLogEntry = logEntryTo.Contains(hashedReceiver);
+
+				if (!isReceiverInLogEntry)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
 	}
 }

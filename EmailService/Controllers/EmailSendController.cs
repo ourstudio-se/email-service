@@ -55,6 +55,13 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult($"Invalid format of recipient email {request.To}.");
             }
 
+            bool hasAtLeastOneEmailAddress = toAddresses.Length > 0;
+
+            if (!hasAtLeastOneEmailAddress)
+            {
+                return new BadRequestObjectResult("No receivers specified. Need at least one.");
+            }
+
             Template template = TemplateUtility.GetTemplateByName(_emailProperties, request.Template);
 
             bool isInvalidTemplate = template == null;

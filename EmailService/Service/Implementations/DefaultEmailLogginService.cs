@@ -29,6 +29,18 @@ namespace EmailService.Service.Implementations
 			_dataContext = dataContext;
 			_serviceProperties = serviceProperties;
 		}
+
+		public Task<LogEntry> GetAsync(Guid id)
+		{
+			bool canGetLogs = _serviceProperties.SelectedLoggingType == ServiceProperties.LoggingType.DATABASE;
+
+			if (!canGetLogs)
+			{
+				return null;
+			}
+			
+			return Task.FromResult(_dataContext.Logs.FirstOrDefault(l => l.Id.Equals(id)));
+		}
 		
 		public async Task LogAsync(string emailServiceId, string[] receivers, string template,
 			JObject personalContent, JObject content)
@@ -38,7 +50,7 @@ namespace EmailService.Service.Implementations
 			JObject obfuscatedPersonalContent = GetObfuscatedPersonalContent(personalContent);
 			string[] hashedEmailReceivers = GetHashedEmailReceivers(receivers);
 
-			string singleStringEmailReceivers = string.Join(", ", hashedEmailReceivers);
+			string singleStringEmailReceivers = ArrayUtility.GetCommaSeparatedArray(hashedEmailReceivers);
 
 			string nonFormattedObfuscatedPersonalContent = obfuscatedPersonalContent.ToString(Formatting.None);
 			string nonFormattedContent = content.ToString(Formatting.None);
