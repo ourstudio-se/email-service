@@ -1,6 +1,6 @@
 ﻿using System;
+using EmailService.Configurations;
 using EmailService.Database;
-using EmailService.Properties;
 using EmailService.Service;
 using EmailService.Service.Implementations;
 using EmailService.Utils;
@@ -23,73 +23,66 @@ namespace EmailService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            EmailProperties emailProperties = EmailProperties.CreateInstance();
+            EmailConfiguration emailConfiguration = ConfigurationUtility.CreateInstance<EmailConfiguration>(
+                EmailConfiguration.CONFIGURATION_PATH);
             
-            services.AddSingleton(emailProperties);
+            ServiceConfiguration serviceConfiguration = ConfigurationUtility.CreateInstance<ServiceConfiguration>(
+                ServiceConfiguration.CONFIGURATION_PATH);
+
+            ParseServiceConfigurationEnums(serviceConfiguration);
+            
+            services.AddSingleton(emailConfiguration);
+            services.AddSingleton(serviceConfiguration);
+            
             services.AddScoped<IHtmlGeneratorService, HtmlGeneratorService>();
             services.AddScoped<IEmailLoggingService, DefaultEmailLogginService>();
-
-            ServiceProperties serviceProperties = CreateServiceProperties();
-
-            services.AddSingleton(serviceProperties);
-            AddEmailService(serviceProperties, emailProperties, services);
+            
+            AddEmailService(serviceConfiguration, services);
 
             bool isDatabaseLogging =
-                serviceProperties.SelectedLoggingType.Equals(ServiceProperties.LoggingType.DATABASE);
+                serviceConfiguration.SelectedLoggingType.Equals(ServiceConfiguration.LoggingType.DATABASE);
 
             if (isDatabaseLogging)
             {
                 services.AddDbContext<DataContext>(options =>
-                    options.UseSqlServer(serviceProperties.LoggingDatabaseConnectionString));
+                    options.UseSqlServer(serviceConfiguration.LoggingDatabaseConnectionString));
+            }
+            else
+            {
+                services.AddDbContext<DataContext>();
             }
                 
             services.AddMvc();
         }
 
-        private ServiceProperties CreateServiceProperties()
+        private void ParseServiceConfigurationEnums(ServiceConfiguration serviceConfiguration)
         {
-            string selectedEmailService = Configuration.GetValue<string>("EmailService");
-            string emailServiceUrl = Configuration.GetValue<string>("EmailServiceUrl");
-            string emailServiceApiKey = Configuration.GetValue<string>("EmailServiceApiKey");
+            serviceConfiguration.SelectedLoggingType =
+                ServiceConfigurationUtility.ParseLoggingType(serviceConfiguration.LoggingTypeString);
             
-            string selectedLoggingType = Configuration.GetValue<string>("LoggingType");
-            string loggingApiUrl = Configuration.GetValue<string>("LoggingApiUrl");
-            string loggingDatabaseConnectionString = Configuration.GetValue<string>("LoggingDatabaseConnectionString");
+            serviceConfiguration.SelectedEmailService =
+                ServiceConfigurationUtility.ParseEmailService(serviceConfiguration.EmailServiceString);
 
-            ServiceProperties.EmailService? emailService =
-                ServicePropertiesUtility.ParseEmailService(selectedEmailService);
+            bool hasInvalidLoggingType =
+                serviceConfiguration.SelectedLoggingType == ServiceConfiguration.LoggingType.INVALID;
 
-            bool hasNoEmailService = emailService == null;
-
-            if (hasNoEmailService)
+            if (hasInvalidLoggingType)
             {
-                throw new ArgumentException("A valid email service was not provided.");
-            }
-            
-            ServiceProperties.LoggingType? loggingType = ServicePropertiesUtility.ParseLoggingType(selectedLoggingType);
-            bool hasNoLoggingType = loggingType == null;
-
-            if (hasNoLoggingType)
-            {
-                throw new ArgumentException("A valid logging type was not provided.");
+                throw new Exception("Invalid logging type specified in serviceConfiguration.");
             }
 
-            return new ServiceProperties()
+            bool hasInvalidEmailService =
+                serviceConfiguration.SelectedEmailService == ServiceConfiguration.EmailService.INVALID;
+
+            if (hasInvalidEmailService)
             {
-                SelectedEmailService = (ServiceProperties.EmailService) emailService,
-                EmailServiceApiKey = emailServiceApiKey,
-                EmailServiceUrl = emailServiceUrl,
-                
-                SelectedLoggingType = (ServiceProperties.LoggingType) loggingType,
-                LoggingApiUrl = loggingApiUrl,
-                LoggingDatabaseConnectionString = loggingDatabaseConnectionString
-            };
+                throw new Exception("Invalid email service specified in serviceConfiguration.");
+            }
         }
 
-        private void AddEmailService(ServiceProperties serviceProperties, EmailProperties emailProperties,
-            IServiceCollection services)
+        private void AddEmailService(ServiceConfiguration serviceConfiguration, IServiceCollection services)
         {
-            bool isSendgrid = serviceProperties.SelectedEmailService.Equals(ServiceProperties.EmailService.SENDGRID);
+            bool isSendgrid = serviceConfiguration.SelectedEmailService.Equals(ServiceConfiguration.EmailService.SENDGRID);
 
             if (isSendgrid)
             {

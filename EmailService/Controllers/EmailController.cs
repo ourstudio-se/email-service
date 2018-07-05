@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using EmailService.Configurations;
 using EmailService.Dtos.Requests;
 using EmailService.Dtos.Requests.Factories;
 using EmailService.Dtos.Responses;
 using EmailService.Dtos.Responses.Factories;
 using EmailService.Models;
-using EmailService.Properties;
 using EmailService.Service;
 using EmailService.Utils;
 using EmailService.ViewModels;
@@ -21,14 +21,14 @@ namespace EmailService.Controllers
 	public class EmailController : Controller
 	{
 		private readonly IHtmlGeneratorService _htmlGeneratorService;
-		private readonly EmailProperties _emailProperties;
+		private readonly EmailConfiguration _emailConfiguration;
 		private readonly IEmailLoggingService _loggingService;
 
-		public EmailController(IHtmlGeneratorService htmlGeneratorService, EmailProperties emailProperties,
+		public EmailController(IHtmlGeneratorService htmlGeneratorService, EmailConfiguration emailConfiguration,
 			IEmailLoggingService emailLoggingService)
 		{
 			_htmlGeneratorService = htmlGeneratorService;
-			_emailProperties = emailProperties;
+			_emailConfiguration = emailConfiguration;
 			_loggingService = emailLoggingService;
 		}
 		
@@ -144,7 +144,7 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult($"Invalid format of recipient email {request.To}.");
             }
 
-	        Template template = TemplateUtility.GetTemplateByName(_emailProperties, request.Template);
+	        Template template = TemplateUtility.GetTemplateByName(_emailConfiguration, request.Template);
 
             bool isInvalidTemplate = template == null;
 
