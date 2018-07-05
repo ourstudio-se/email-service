@@ -2,7 +2,7 @@
 
 This service provides email templating through React.js, with automatic sending and logging of emails.
 
-You create a react template:
+Basically it allows you to write email templates in JavaScript with React.js:
 
 ```
 const HelloWorld = (props) => (
@@ -15,43 +15,13 @@ const HelloWorld = (props) => (
 export default HelloWorld;
 ```
 
-You add the template to the list of templates in `EmailService\wwwroot\javascripts\email.js`.
-
-```
-...
-import HelloWorld from './custom/templates/helloworld';
-
-const emailTemplates = {
-	"helloworld": HelloWorld
-};
-...
-```
-
-You configure sender name and email address, as well as a mapping for what email subject each template should have in `EmailService\Properties\emailProperties.json`:
-
-```
-{	
-	"fromAddress": "a@gmail.com",
-	"fromName": "A",
-	
-	"templates": [
-		{
-			"name": "helloworld",
-			"subject": "HelloWorld example email!"
-		}
-	]
-}
-```
-
-You configure what email service to use, and what logging method to use in `EmailService\appsettings.json`, see Configuration section below.
-
-Then you can start sending emails through the service API:
+Then with a little bit of configuration, you can start sending emails through the service API:
 
 ```
 # POST /api/email/send
 {
 	"to": ["b@gmail.com"],
-	"template": "helloworld",
+	"template": "HelloWorld",
 	"content": {
 		"some": "react content"
 	},
@@ -60,6 +30,8 @@ Then you can start sending emails through the service API:
 	}
 }
 ```
+
+If configured, the app will then log all your email requests either to a database or an external API.
 
 ## content vs personalContent
 
@@ -73,19 +45,31 @@ personalContent
 So you are adviced to put all personal user data in the personalContent param, and the non-user-related content in the content param.
 
 
-# Configuration
+# Installation and Configuration
 
-The following needs to be added to "appSettings.json":
+Make sure you have the following installed:
 
-```
-"EmailService": "", 		//"sendgrid" or other service that is supported
-"EmailServiceUrl": "",		//url to the email service API
-"EmailServiceApiKey": "",	//your api key
+* NodeJs
+* Yarn
+* Dotnet SDK and runtime v. 2.1
 
-"LoggingType": "",							//"database", "api" or "none"
-"LoggingApiUrl": "",						//if LoggingType is "api", you should provide the API endpoint to which logs should go
-"LoggingDatabaseConnectionString": "",		//if LoggingType is "database", you should provide the database connection string to which logs should go
-```
+Note: The app is divided into two parts; the service itself and your own app. Your own app contains all of the email templates and configurations used to run the email service.
+
+With that in mind, you should then:
+
+1. Clone this github repository
+2. Copy the content of the folder "EmailService/app_example" to your own directory wherever you prefer. This is the content of your own app, and you are adviced to __not__ store the content inside of this repository, but instead make your own version control repository and keep the content there. This is to be able to version control your own email configurations and email templates, without having to use this repository.
+3. Navigate to your own application directory
+4. Edit the file `configurations/buildConfigurations.json` and enter the targetDirectory. The target directory should be an absolute path to wherever this repository (the email service repository) is located, and to the `app_content` directory inside of this repository. So for instance: `c:\\development\\email-service\\EmailService\\app_content`. This will allow you to build and run webpack from your own app directory, but the build output will be put inside of this repository's folder `app_content` so that the service can consume the content when ran.
+5. Edit the file `configurations/serviceConfiguration.json`. See separate section below.
+5. Create your own React templates...
+5. Export your React templates inside of the file `javascripts\templates\index.js`.
+5. Edit the file `configurations/emailConfiguration.json`. See separate section below.
+5. Run `yarn install` to install the dependencies.
+5. Run `yarn watch` to create the javascript build.
+5. Navigate to the service repository directory.
+5. Build the dotnet service with: `dotnet build EmailService/EmailService.csproj -c Release`
+5. Run the dotnet service with: `dotnet EmailService\bin\Release\netcoreapp2.1\EmailService.dll`
 
 
 # Endpoint summaries:
