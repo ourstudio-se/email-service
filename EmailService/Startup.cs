@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Data;
-using System.Data.Common;
-using System.Threading.Tasks;
 using EmailService.Database;
 using EmailService.Properties;
 using EmailService.Service;
@@ -105,10 +102,6 @@ namespace EmailService
         {
             DataContext dataContext = serviceProvider.GetService<DataContext>();
 
-            //TODO: Can be removed?
-            Task task = OpenDatabaseConnectionAsync(dataContext);
-            task.Wait();
-            
             bool shouldMigrateDbOnStartup = Configuration.GetValue<bool>("MigrateDbOnStartup");
 
             if (shouldMigrateDbOnStartup)
@@ -123,17 +116,6 @@ namespace EmailService
             }
             
             app.UseMvc();
-        }
-
-        private async Task OpenDatabaseConnectionAsync(DataContext dataContext)
-        {
-            DbConnection connection = dataContext.Database.GetDbConnection();
-            bool isClosed = connection.State == ConnectionState.Closed;
-
-            if (isClosed)
-            {
-                await dataContext.Database.GetDbConnection().OpenAsync();
-            }
         }
     }
 }
