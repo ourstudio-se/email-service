@@ -1,19 +1,13 @@
-
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
 import { createServerRenderer } from 'aspnet-prerendering';
-import Foobar from './custom/templates/foobar';
-
-const emailTemplates = {
-	"foobar": Foobar
-};
+import * as Templates from './templates'
 
 const EmptyComponent = (props) => (<div></div>);
 
 const getTemplate = (props) => {
-	const key = props.templateName.toLowerCase();
-	return emailTemplates[key] || EmptyComponent;
+	return Templates[props.templateName]["default"];
 };
 
 const getRootComponent = (props) => {

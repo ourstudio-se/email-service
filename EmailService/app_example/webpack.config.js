@@ -1,15 +1,15 @@
 const path = require('path');
-const CleanPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
+const buildConfiguration = require('./configurations/buildConfiguration.json')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
     devtool: "cheap-eval-source-map",
-    context: path.resolve(__dirname, './EmailService/wwwroot'),
     entry: {
-        default: './javascripts/email.js',
+        default: path.resolve(__dirname, './javascripts/email.js'),
     },
     output: {
-        path: path.resolve(__dirname, './EmailService', 'wwwroot', 'build'),
+        path: buildConfiguration.TargetDirectory,
         filename: '[name].bundle.js',
         libraryTarget: "commonjs"
     },
@@ -30,8 +30,16 @@ module.exports = {
             }
         ],
     },
-    plugins: [
-        new CleanPlugin('EmailService/wwwroot/build')
+    "plugins": [
+        new CopyWebpackPlugin([
+        {
+            from: path.resolve(__dirname, './configurations/emailConfiguration.json'),
+            to: buildConfiguration.TargetDirectory
+        },
+        {
+            from: path.resolve(__dirname, './configurations/serviceConfiguration.json'),
+            to: buildConfiguration.TargetDirectory
+        }])
     ],
     target: "node"
 };

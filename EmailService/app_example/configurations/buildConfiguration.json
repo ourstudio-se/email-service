@@ -1,3 +1,3 @@
 {
-	"TargetDirectory": "[PROJECT_PATH_HERE]/EmailService/app_content"
+	"TargetDirectory": "[ABSOLUTE PATH HERE WITH FORMAT c:\\foo\\bar\\baz FOR WINDOWS]"
 }

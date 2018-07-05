@@ -8,7 +8,7 @@ namespace EmailService.Utils
 	{
 		public static Template GetTemplateByName(EmailConfiguration emailConfiguration, string name)
 		{
-			return emailConfiguration.Templates.FirstOrDefault(d => d.Name.ToLower().Equals(name.ToLower()));
+			return emailConfiguration.Templates.FirstOrDefault(d => d.Name.Equals(name));
 		}
 	}
 }

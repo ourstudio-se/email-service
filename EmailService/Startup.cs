@@ -47,6 +47,10 @@ namespace EmailService
                 services.AddDbContext<DataContext>(options =>
                     options.UseSqlServer(serviceConfiguration.LoggingDatabaseConnectionString));
             }
+            else
+            {
+                services.AddDbContext<DataContext>();
+            }
                 
             services.AddMvc();
         }
