@@ -27,7 +27,23 @@ const emailTemplates = {
 ...
 ```
 
-You configure what email service to use, and what logging method to use.
+You configure sender name and email address, as well as a mapping for what email subject each template should have in `EmailService\Properties\emailProperties.json`:
+
+```
+{	
+	"fromAddress": "a@gmail.com",
+	"fromName": "A",
+	
+	"templates": [
+		{
+			"name": "helloworld",
+			"subject": "HelloWorld example email!"
+		}
+	]
+}
+```
+
+You configure what email service to use, and what logging method to use in `EmailService\appsettings.json`, see Configuration section below.
 
 Then you can start sending emails through the service API:
 
