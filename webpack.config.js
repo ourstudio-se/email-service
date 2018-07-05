@@ -1,6 +1,4 @@
 const path = require('path');
-const AssetsPlugin = require('assets-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 
@@ -19,17 +17,13 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
-                exclude: /node_modules\/(?!(([^\/]+?\/){1,2}(src|es6)))/,
                 use: [ {
                     loader: 'babel-loader',
                     options: {
                         presets: [
-                            [ "env", { "loose": true, "modules": false } ],
+                            [ "es2015" ],
                             [ "react" ],
                             [ "stage-0" ]
-                        ],
-                        plugins: [
-                            "transform-decorators-legacy"
                         ]
                     }
                 } ],

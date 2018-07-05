@@ -105,6 +105,7 @@ namespace EmailService
         {
             DataContext dataContext = serviceProvider.GetService<DataContext>();
 
+            //TODO: Can be removed?
             Task task = OpenDatabaseConnectionAsync(dataContext);
             task.Wait();
             
