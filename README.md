@@ -58,18 +58,73 @@ Note: The app is divided into two parts; the service itself and your own app. Yo
 With that in mind, you should then:
 
 1. Clone this github repository
-2. Copy the content of the folder "EmailService/app_example" to your own directory wherever you prefer. This is the content of your own app, and you are adviced to __not__ store the content inside of this repository, but instead make your own version control repository and keep the content there. This is to be able to version control your own email configurations and email templates, without having to use this repository.
+2. Copy the content of the folder `EmailService/app_example` to your own directory wherever you prefer. This is the content of your own app, and you are adviced to __not__ store the content inside of this repository, but instead make your own version control repository and keep the content there. This is to be able to version control your own email configurations and email templates, without having to use this repository.
 3. Navigate to your own application directory
 4. Edit the file `configurations/buildConfigurations.json` and enter the targetDirectory. The target directory should be an absolute path to wherever this repository (the email service repository) is located, and to the `app_content` directory inside of this repository. So for instance: `c:\\development\\email-service\\EmailService\\app_content`. This will allow you to build and run webpack from your own app directory, but the build output will be put inside of this repository's folder `app_content` so that the service can consume the content when ran.
 5. Edit the file `configurations/serviceConfiguration.json`. See separate section below.
 5. Create your own React templates...
-5. Export your React templates inside of the file `javascripts\templates\index.js`.
-5. Edit the file `configurations/emailConfiguration.json`. See separate section below.
-5. Run `yarn install` to install the dependencies.
-5. Run `yarn watch` to create the javascript build.
-5. Navigate to the service repository directory.
+5. Export your React templates inside of the file `javascripts\templates\index.js`
+5. Edit the file `configurations/emailConfiguration.json`. See separate section below
+5. Run `yarn install` to install the JavaScript dependencies
+5. Run `yarn watch` to create the JavaScript build
+5. Navigate to the service repository directory
+5. Double check that there is now three files inside of the `EmailService/app_content` directory: `default.bundle.js`, `emailConfiguration.json` and `serviceConfiguration.json`
 5. Build the dotnet service with: `dotnet build EmailService/EmailService.csproj -c Release`
 5. Run the dotnet service with: `dotnet EmailService\bin\Release\netcoreapp2.1\EmailService.dll`
+
+## Configure serviceConfiguration.json
+
+The configuration should have the following format:
+
+```
+{
+	"EmailService": "",
+	"EmailServiceUrl": "",
+	"EmailServiceApiKey": "",
+
+	"LoggingType": "",
+	"LoggingApiUrl": "",
+	"LoggingDatabaseConnectionString": ""
+}
+```
+
+With the following values:
+
+Key | Values
+--- | ------
+`EmailService` | One of the supported external email services that should be used to send the emails, which currently are: `sendgrid`
+`EmailServiceUrl` | A URL to the external email services endpoint for sending an email. The HTTP method used is POST.
+`EmailServiceApiKey` | An api key to the external email service.
+`LoggingType` | Enter `database` if you want to log to a database, `api` if you want to log to an external API or `none` if you do not want logging of emails sent.
+`LoggingApiUrl` | If you chose logging type `api`, you should enter the URL of the api to send logs to here. The HTTP method used is POST.
+`LoggingDatabaseConnectionString` | If you chose logging type `database`, you should enter a connection string for your SQL database here. See [this page](https://msdn.microsoft.com/en-us/library/system.data.sqlclient.sqlconnection.connectionstring(v=vs.110).aspx) for information about the format.
+
+
+## Configure emailConfiguration.json
+
+The configuration should have the following format:
+
+```
+{	
+	"FromAddress": "",
+	"FromName": "",
+	
+	"Templates": [
+		{
+			"Name": "",
+			"Subject": ""
+		}
+	]
+}
+```
+
+With the following values:
+
+Key | Values
+--- | ------
+FromAddress | The email address that the email will appear to be from. This is the email address that the user receiving the email will see in their email client as sender.
+FromName | The name of the email sender. Will also be visible by the user receiving the email in their email client.
+Templates | An array of "Templates", which are JSON object mapping a template name to a subject. This is to make sure that each email template have their own email subject, which is the subject displayed to the user receiving the email in their email client. The name should match a React template name, and the subject can be anything.
 
 
 # Endpoint summaries:

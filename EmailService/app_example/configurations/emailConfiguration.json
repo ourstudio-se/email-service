@@ -1,11 +1,11 @@
 {	
-	"fromAddress": "",
-	"fromName": "",
+	"FromAddress": "",
+	"FromName": "",
 	
-	"templates": [
+	"Templates": [
 		{
-			"name": "",
-			"subject": ""
+			"Name": "",
+			"Subject": ""
 		}
 	]
 }
