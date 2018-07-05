@@ -15,7 +15,7 @@ const HelloWorld = (props) => (
 export default HelloWorld;
 ```
 
-You add the template to the list of templates in "EmailService\wwwroot\javascripts\email.js".
+You add the template to the list of templates in `EmailService\wwwroot\javascripts\email.js`.
 
 ```
 ...
