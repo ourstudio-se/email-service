@@ -48,9 +48,9 @@ You configure what email service to use, and what logging method to use in `Emai
 Then you can start sending emails through the service API:
 
 ```
-# /api/email/send
+# POST /api/email/send
 {
-	"to": ["a@gmail.com"],
+	"to": ["b@gmail.com"],
 	"template": "helloworld",
 	"content": {
 		"some": "react content"
