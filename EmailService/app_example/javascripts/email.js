@@ -2,9 +2,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
 import { createServerRenderer } from 'aspnet-prerendering';
-import * as Templates from './templates'
-
-const EmptyComponent = (props) => (<div></div>);
+import * as Templates from './templates';
 
 const getTemplate = (props) => {
 	return Templates[props.templateName]["default"];
