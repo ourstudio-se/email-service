@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using EmailService.Configurations;
 using EmailService.Dtos.Requests;
 using EmailService.Dtos.Requests.Factories;
 using EmailService.Models;
-using EmailService.Properties;
 using EmailService.Service;
 using EmailService.Utils;
 using EmailService.ViewModels;
@@ -18,15 +18,15 @@ namespace EmailService.Controllers
     [ApiController]
     public class EmailSendController : ControllerBase
     {
-        private readonly EmailProperties _emailProperties;
+        private readonly EmailConfiguration _emailConfiguration;
         private readonly IEmailService _emailService;
         private readonly IHtmlGeneratorService _htmlGeneratorService;
         private readonly IEmailLoggingService _emailLoggingService;
         
-        public EmailSendController(EmailProperties emailProperties, IEmailService emailService,
+        public EmailSendController(EmailConfiguration emailConfiguration, IEmailService emailService,
             IHtmlGeneratorService htmlGeneratorService, IEmailLoggingService emailLoggingService)
         {
-            _emailProperties = emailProperties;
+            _emailConfiguration = emailConfiguration;
             _emailService = emailService;
             _htmlGeneratorService = htmlGeneratorService;
             _emailLoggingService = emailLoggingService;
@@ -71,7 +71,7 @@ namespace EmailService.Controllers
                 return new BadRequestObjectResult("No receivers specified. Need at least one.");
             }
 
-            Template template = TemplateUtility.GetTemplateByName(_emailProperties, request.Template);
+            Template template = TemplateUtility.GetTemplateByName(_emailConfiguration, request.Template);
 
             bool isInvalidTemplate = template == null;
 

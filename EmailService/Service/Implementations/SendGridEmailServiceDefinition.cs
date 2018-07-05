@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using EmailService.Configurations;
 using EmailService.Models;
-using EmailService.Properties;
 using EmailService.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -11,13 +11,13 @@ namespace EmailService.Service.Implementations
 {
 	public class SendGridEmailServiceDefinition : IEmailServiceDefinition
 	{
-		public string GetBody(EmailProperties emailProperties, Email email)
+		public string GetBody(EmailConfiguration emailConfiguration, Email email)
 		{
 			string contentType = ContentTypeUtility.GetContentTypeString(email.ContentType);
 			string[] receivers = email.To.Select(t => t.ToString()).ToArray();
 			
-			return new SendGridBodyGenerator().Generate(receivers, email.Subject, emailProperties.FromName,
-				emailProperties.FromAddress, contentType, email.Content);
+			return new SendGridBodyGenerator().Generate(receivers, email.Subject, emailConfiguration.FromName,
+				emailConfiguration.FromAddress, contentType, email.Content);
 		}
 
 		public string GetAuthenticationHeaderScheme()
@@ -25,9 +25,9 @@ namespace EmailService.Service.Implementations
 			return "Bearer";
 		}
 
-		public string GetAuthenticationHeaderValue(ServiceProperties serviceProperties)
+		public string GetAuthenticationHeaderValue(ServiceConfiguration serviceConfiguration)
 		{
-			return serviceProperties.EmailServiceApiKey;
+			return serviceConfiguration.EmailServiceApiKey;
 		}
 
 		public string GetIdFromResponse(HttpResponseMessage response)

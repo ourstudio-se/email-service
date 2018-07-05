@@ -7,9 +7,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using EmailService.Configurations;
 using EmailService.Database;
 using EmailService.Models;
-using EmailService.Properties;
 using EmailService.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -22,17 +22,17 @@ namespace EmailService.Service.Implementations
 		private static readonly HttpClient _httpClient = new HttpClient();
 		
 		private readonly DataContext _dataContext;
-		private readonly ServiceProperties _serviceProperties;
+		private readonly ServiceConfiguration _serviceConfiguration;
 
-		public DefaultEmailLogginService(DataContext dataContext, ServiceProperties serviceProperties)
+		public DefaultEmailLogginService(DataContext dataContext, ServiceConfiguration serviceConfiguration)
 		{
 			_dataContext = dataContext;
-			_serviceProperties = serviceProperties;
+			_serviceConfiguration = serviceConfiguration;
 		}
 
 		public Task<LogEntry> GetAsync(Guid id)
 		{
-			bool canGetLogs = _serviceProperties.SelectedLoggingType == ServiceProperties.LoggingType.DATABASE;
+			bool canGetLogs = _serviceConfiguration.SelectedLoggingType == ServiceConfiguration.LoggingType.DATABASE;
 
 			if (!canGetLogs)
 			{
@@ -66,8 +66,8 @@ namespace EmailService.Service.Implementations
 				Content = nonFormattedContent
 			};
 
-			bool isApiLogging = _serviceProperties.SelectedLoggingType.Equals(ServiceProperties.LoggingType.API);
-			bool isDatabaseLogging = _serviceProperties.SelectedLoggingType.Equals(ServiceProperties.LoggingType.DATABASE);
+			bool isApiLogging = _serviceConfiguration.SelectedLoggingType.Equals(ServiceConfiguration.LoggingType.API);
+			bool isDatabaseLogging = _serviceConfiguration.SelectedLoggingType.Equals(ServiceConfiguration.LoggingType.DATABASE);
 
 			if (isApiLogging)
 			{
@@ -108,7 +108,7 @@ namespace EmailService.Service.Implementations
 
 		private async Task LogToApiAsync(LogEntry logEntry)
 		{
-			string url = _serviceProperties.LoggingApiUrl;
+			string url = _serviceConfiguration.LoggingApiUrl;
 			string body = ConvertToJson(logEntry);
 			
 			_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

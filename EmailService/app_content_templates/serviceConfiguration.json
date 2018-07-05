@@ -1,0 +1,9 @@
+{
+	"EmailService": "sendgrid",
+	"EmailServiceUrl": "https://api.sendgrid.com/v3/mail/send",
+	"EmailServiceApiKey": "",
+
+	"LoggingType": "none",
+	"LoggingApiUrl": "",
+	"LoggingDatabaseConnectionString": ""
+}

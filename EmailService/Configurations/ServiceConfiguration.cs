@@ -1,7 +1,16 @@
-﻿namespace EmailService.Properties
+﻿using Newtonsoft.Json;
+
+namespace EmailService.Configurations
 {
-	public class ServiceProperties
+	public class ServiceConfiguration
 	{
+		public const string CONFIGURATION_PATH = "app_content/serviceConfiguration.json";
+		
+		[JsonProperty("LoggingType")]
+		public string LoggingTypeString { get; set; }
+		[JsonProperty("EmailService")]
+		public string EmailServiceString { get; set; }
+		
 		public LoggingType SelectedLoggingType { get; set; }
 		public string LoggingApiUrl { get; set; }
 		public string LoggingDatabaseConnectionString { get; set; }
@@ -14,12 +23,14 @@
 		{
 			API,
 			DATABASE,
-			NONE
+			NONE,
+			INVALID
 		}
 
 		public enum EmailService
 		{
-			SENDGRID
+			SENDGRID,
+			INVALID
 		}
 	}
 }
