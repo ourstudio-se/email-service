@@ -7,9 +7,8 @@ namespace EmailService.Dtos.Requests.Factories
 		{
 			bool hasTo = request.To != null;
 			bool hasTemplate = !string.IsNullOrWhiteSpace(request.Template);
-			bool hasContent = request.Content != null;
 
-			return hasTo && hasTemplate && hasContent;
+			return hasTo && hasTemplate;
 		}
 	}
 }

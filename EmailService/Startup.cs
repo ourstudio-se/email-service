@@ -1,5 +1,6 @@
 ﻿using System;
 using EmailService.Configurations;
+using EmailService.Controllers;
 using EmailService.Database;
 using EmailService.Service;
 using EmailService.Service.Implementations;
@@ -33,6 +34,8 @@ namespace EmailService
             
             services.AddSingleton(emailConfiguration);
             services.AddSingleton(serviceConfiguration);
+
+            services.AddTransient<EmailPreviewController, EmailPreviewController>();
             
             services.AddScoped<IHtmlGeneratorService, HtmlGeneratorService>();
             services.AddScoped<IEmailLoggingService, DefaultEmailLogginService>();
