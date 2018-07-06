@@ -134,14 +134,20 @@ Templates | An array of "Templates", which are JSON object mapping a template na
 
 Healthcheck for the service. Returns 200 OK if operational.
 
-## GET api/email/{id}
+## GET api/email/logs/{id}
 
 Returns information about an email that has been sent.
 This requires the logging method to be "database", otherwise this endpoint will not return a 200 OK result.
 
-## POST api/email
+id is found in the logging database table.
 
-Preview an email, without actually sending it.
+## GET api/email/preview
+
+Preview an email, without actually sending it. Returns a single HTML page with the email content.
+
+## POST api/email/preview
+
+Preview an email, without actually sending it. Returns a JSON object with more detailed data of what the email will look like.
 
 ## POST api/email/send
 
