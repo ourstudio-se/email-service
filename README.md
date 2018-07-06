@@ -70,7 +70,8 @@ With that in mind, you should then:
 5. Navigate to the service repository directory
 5. Double check that there is now three files inside of the `EmailService/app_content` directory: `default.bundle.js`, `emailConfiguration.json` and `serviceConfiguration.json`
 5. Build the dotnet service with: `dotnet build EmailService/EmailService.csproj -c Release`
-5. Run the dotnet service with: `dotnet EmailService\bin\Release\netcoreapp2.1\EmailService.dll`
+5. Navigate to the `EmailService` directory
+5. Run the dotnet service with: `dotnet bin\Release\netcoreapp2.1\EmailService.dll`
 
 ## Configure serviceConfiguration.json
 
