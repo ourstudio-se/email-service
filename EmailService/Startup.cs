@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace EmailService
 {
@@ -36,6 +37,10 @@ namespace EmailService
             services.AddSingleton(serviceConfiguration);
 
             services.AddTransient<EmailPreviewController, EmailPreviewController>();
+
+            services.AddLogging(builder => builder
+                .AddConsole()
+                .AddDebug());
             
             services.AddScoped<IHtmlGeneratorService, HtmlGeneratorService>();
             services.AddScoped<IEmailLoggingService, DefaultEmailLogginService>();
