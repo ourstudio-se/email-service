@@ -14,7 +14,8 @@ namespace EmailService
         {
             return WebHost.CreateDefaultBuilder(args)
                 .UseKestrel()
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .UseUrls("http://localhost:51101");
         }
     }
 }
