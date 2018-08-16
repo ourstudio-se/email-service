@@ -41,9 +41,11 @@ namespace EmailService.Controllers
         [HttpGet]
         [Route("", Name = "PreviewEmailGet")]
         [Produces("text/html")]
-        public async Task<IActionResult> Get([FromQuery] EmailSendRequest request)
-        {
-	        OkObjectResult actionResult = await Post(request) as OkObjectResult;
+        public async Task<IActionResult> Get([FromQuery] EmailSendRequestRaw request)
+		{
+			EmailSendRequest sendRequest = EmailSendRequestFactory.Convert(request);
+			
+	        OkObjectResult actionResult = await Post(sendRequest) as OkObjectResult;
 	        EmailPreviewResponse previewResponse = (EmailPreviewResponse) actionResult.Value;
 
 	        return new ContentResult()
