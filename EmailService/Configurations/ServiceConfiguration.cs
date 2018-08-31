@@ -19,6 +19,8 @@ namespace EmailService.Configurations
 		public string EmailServiceUrl { get; set; }
 		public string EmailServiceApiKey { get; set; }
 		
+		public string ServiceApiKey { get; set; }
+		
 		public enum LoggingType
 		{
 			API,

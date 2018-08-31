@@ -2,6 +2,7 @@
 using EmailService.Configurations;
 using EmailService.Controllers;
 using EmailService.Database;
+using EmailService.Middleware;
 using EmailService.Service;
 using EmailService.Service.Implementations;
 using EmailService.Utils;
@@ -115,6 +116,8 @@ namespace EmailService
                 {
                 }
             }
+
+            app.UseMiddleware<AuthenticationMiddleware>();
             
             app.UseMvc();
         }
