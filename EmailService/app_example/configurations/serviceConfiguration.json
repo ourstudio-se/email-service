@@ -5,5 +5,7 @@
 
 	"LoggingType": "none",
 	"LoggingApiUrl": "",
-	"LoggingDatabaseConnectionString": ""
+	"LoggingDatabaseConnectionString": "",
+
+	"ServiceApiKey": ""
 }

@@ -99,6 +99,7 @@ Key | Values
 `LoggingType` | Enter `database` if you want to log to a database, `api` if you want to log to an external API or `none` if you do not want logging of emails sent.
 `LoggingApiUrl` | If you chose logging type `api`, you should enter the URL of the api to send logs to here. The HTTP method used is POST.
 `LoggingDatabaseConnectionString` | If you chose logging type `database`, you should enter a connection string for your SQL database here. See [this page](https://msdn.microsoft.com/en-us/library/system.data.sqlclient.sqlconnection.connectionstring(v=vs.110).aspx) for information about the format.
+`ServiceApiKey` | An optional API key that if configured has to be passed to the EmailTemplatingService as an HTTP Authorization header on every request. If no API key is given, the API will be open to anyone.
 
 
 ## Configure emailConfiguration.json
