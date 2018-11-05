@@ -18,14 +18,7 @@ namespace EmailService.Middleware
 		public async Task Invoke(HttpContext context)
 		{
 			string authenticationHeader = context.Request.Headers["Authorization"];
-			bool hasNoAuthenticationHeader = authenticationHeader == null;
-
-			if (hasNoAuthenticationHeader)
-			{
-				FailContext(context);
-				return;
-			}
-
+			
 			bool isValidAuthentication = IsValidAuthentication(authenticationHeader);
 
 			if (isValidAuthentication)
@@ -40,7 +33,7 @@ namespace EmailService.Middleware
 
 		private bool IsValidAuthentication(string authenticationHeader)
 		{
-			bool hasNoServiceApiKey = string.IsNullOrWhiteSpace(_serviceConfiguration.EmailServiceApiKey);
+			bool hasNoServiceApiKey = string.IsNullOrWhiteSpace(_serviceConfiguration.ServiceApiKey);
 
 			if (hasNoServiceApiKey)
 			{
