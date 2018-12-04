@@ -39,6 +39,10 @@ module.exports = {
         {
             from: path.resolve(__dirname, './configurations/serviceConfiguration.json'),
             to: buildConfiguration.TargetDirectory
+        },
+        {
+            from: path.resolve(__dirname, './configurations/_Layout.cshtml'),
+            to: buildConfiguration.TargetDirectory
         }])
     ],
     target: "node"

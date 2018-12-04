@@ -65,6 +65,7 @@ With that in mind, you should then:
 5. Create your own React templates...
 5. Export your React templates inside of the file `javascripts\templates\index.js`
 5. Edit the file `configurations/emailConfiguration.json`. See separate section below
+5. Edit the file `configurations/_Layout.cshtml` to contain the html that you want for all of your emails. The `@RenderBody()` part is required since it will be replaced with the react code.
 5. Run `yarn install` to install the JavaScript dependencies
 5. Run `yarn watch` to create the JavaScript build
 5. Navigate to the service repository directory
